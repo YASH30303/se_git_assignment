@@ -30,8 +30,25 @@ def state():
         return render_template('stateWise.html',totalS=[maleD,femalD],maleD=maleD,femaleD=femalD, state = state)
 
 
-# cause rout v
+# cause route
+@app.route('/cause', methods=['GET', 'POST'])
+def cause():
+    # Handle GET request
+    if request.method == "GET":
+        return render_template('cause.html')
 
+    # Handle POST request
+    elif request.method == 'POST':
+        state = request.form['stateSelected']
+        df = pd.read_csv('SuicideData.csv')
+        df = df[df['State'] == state]
+        newdf = df[['Type', 'Total']]
+        newdf = newdf.groupby('Type').sum()
+
+        newTotal = newdf['Total'].tolist()
+        types = newdf.index.tolist()
+
+        return render_template('cause.html', totalS=newTotal, Stype=types, state=state)
 
   
 if __name__ == '__main__':  
