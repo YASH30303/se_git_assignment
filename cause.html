@@ -1,12 +1,138 @@
 <!doctype html>
 <html lang="en">
-   <head>
-      <!-- Required meta tags -->
-      <meta charset="utf-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1">
-      <script src='https://cdn.plot.ly/plotly-2.20.0.min.js'></script>
-      <!-- Bootstrap CSS -->
-      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-      <title>State Wise Analysis</title>
-   </head>
-   </html>
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src='https://cdn.plot.ly/plotly-2.20.0.min.js'></script>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <title>State Wise Analysis</title>
+</head>
+
+<body class="bg-dark">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="/">Sucide Analysis</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="/">Home </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/state">State Wise</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/cause">Sucide Reason</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <br><br>
+    <div class="container">
+        <form method="POST" action="/cause" enctype="multipart/form-data">
+            <div class="row">
+                <!-- month -->
+                <div style="vertical-align: sub;">
+                    <p class="text-light" style=" font-size:100%;">Select state to get Sucide Ratio of Male and Female
+                    </p>
+                </div>
+                <div style="padding-bottom: 1%;">
+                    <select id='stateSelected' name="stateSelected" style="color:white; font-size:100%; padding: 7px;"
+                        class="col-xl-4 field btn-primary dropdown-toggle float-left">
+                        <option disabled selected value>Select State </option>
+                        <option value="Andhra Pradesh">Andhra Pradesh</option>
+                        <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+                        <option value="Assam">Assam</option>
+                        <option value="Bihar">Bihar</option>
+                        <option value="Chandigarh">Chandigarh</option>
+                        <option value="Chhattisgarh">Chhattisgarh</option>
+                        <option value="D & N Haveli">D & N Haveli</option>
+                        <option value="Daman & Diu">Daman & Diu</option>
+                        <option value="Delhi (Ut)">Delhi (Ut)</option>
+                        <option value="Goa">Goa</option>
+                        <option value="Gujarat">Gujarat</option>
+                        <option value="Haryana">Haryana</option>
+                        <option value="Himachal Pradesh">Himachal Pradesh</option>
+                        <option value="Jammu & Kashmir">Jammu & Kashmir</option>
+                        <option value="Jharkhand">Jharkhand</option>
+                        <option value="Karnataka">Karnataka</option>
+                        <option value="Kerala">Kerala</option>
+                        <option value="Lakshadweep">Lakshadweep</option>
+                        <option value="Madhya Pradesh">Madhya Pradesh</option>
+                        <option value="Maharashtra">Maharashtra</option>
+                        <option value="Manipur">Manipur</option>
+                        <option value="Meghalaya">Meghalaya</option>
+                        <option value="Mizoram">Mizoram</option>
+                        <option value="Nagaland">Nagaland</option>
+                        <option value="Odisha">Odisha</option>
+                        <option value="Puducherry">Puducherry</option>
+                        <option value="Punjab">Punjab</option>
+                        <option value="Rajasthan">Rajasthan</option>
+                        <option value="Sikkim">Sikkim</option>
+                        <option value="Tamil Nadu">Tamil Nadu</option>
+                        <option value="Total (All India)">Total (All India)</option>
+                        <option value="Total (States)">Total (States)</option>
+                        <option value="Total (Uts)">Total (Uts)</option>
+                        <option value="Tripura">Tripura</option>
+                        <option value="Uttar Pradesh">Uttar Pradesh</option>
+                        <option value="Uttarakhand">Uttarakhand</option>
+                        <option value="West Bengal">West Bengal</option>
+                    </select>
+                    <button class="btn bg-warning btn-round waves-effect waves-light">Get Insight</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <script src="script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+    <hr>
+    <div class="container">
+        <div class="row">
+            <!--  -->
+            {% if totalS|length > 1 %}
+            <div class="col-sm-12 ">
+                <h5 class="text-light">Piechart of Suicide Types in {{ state}} State</h5>
+
+                <div id='causeChart'>
+                    <!-- Plotly chart will be drawn inside this DIV -->
+                </div>
+                <script>
+                    var newVal = '{{totalS}}';
+                    console.log(typeof newVal);
+                    var ls = ['1', '2'];
+                    console.log(typeof ls);
+
+                    //   var tot = 
+                    const myArr = JSON.parse(newVal);
+                    console.log(myArr);
+
+
+                    var data = [{
+                        values: myArr,
+                        labels: ['Bankruptcy or Sudden change in Economic', 'Bankruptcy or Sudden change in Economic Status', 'By Consuming Insecticides', 'By Consuming Other Poison', 'By Drowning', 'By Fire-Arms', 'By Fire/Self Immolation', 'By Hanging', 'By Jumping from (Building)', 'By Jumping from (Other sites)', 'By Jumping off Moving Vehicles/Trains', 'By Machine', 'By Other means', 'By Other means (please specify)', 'By Over Alcoholism', 'By Overdose of sleeping pills', 'By Self Infliction of injury', 'By coming under running vehicles/trains', 'By touching electric wires', 'Cancellation/Non-Settlement of Marriage', 'Cancer', 'Causes Not known', 'Death of Dear Person', 'Diploma', 'Divorce', 'Divorcee', 'Dowry Dispute', 'Drug Abuse/Addiction', 'Failure in Examination', 'Fall in Social Reputation', 'Family Problems', 'Farming/Agriculture Activity', 'Graduate', 'House Wife', 'Hr. Secondary/Intermediate/Pre-Universit', 'Ideological Causes/Hero Worshipping', 'Illegitimate Pregnancy', 'Illness (Aids/STD)', 'Insanity/Mental Illness', 'Love Affairs', 'Married', 'Matriculate/Secondary', 'Middle', 'Never Married', 'No Education', 'Not having Children (Barrenness/Impotency', 'Not having Children(Barrenness/Impotency', 'Other Causes (Please Specity)', 'Other Prolonged Illness', 'Others (Please Specify)', 'Paralysis', 'Physical Abuse (Rape/Incest Etc.)', 'Post Graduate and Above', 'Poverty', 'Primary', 'Professional Activity', 'Professional/Career Problem', 'Property Dispute', 'Public Sector Undertaking', 'Retired Person', 'Self-employed (Business activity)', 'Seperated', 'Service (Government)', 'Service (Private)', 'Student', 'Suspected/Illicit Relation', 'Unemployed', 'Unemployment', 'Widowed/Widower'],
+                        type: 'pie'
+                    }];
+
+                    var layout = {
+                        height: 800,
+                        width: 800
+                    };
+
+                    Plotly.newPlot('causeChart', data, layout);
+                </script>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+
+</html>
+
