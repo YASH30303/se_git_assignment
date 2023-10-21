@@ -1,12 +1,46 @@
 from flask import Flask, app, render_template, redirect, request, jsonify, json, make_response
-app = Flask(__name__)
+
 import pandas as pd
+import matplotlib.pyplot as plt
+import io
+import base64
+
+app = Flask(__name__)
 
 
 # Root URL
 @app.route('/')
 def single_converter():
     return render_template('index.html')
+
+@app.route('/ageGroup', methods=['GET', 'POST'])
+def age_group():
+    if request.method == "GET":
+        return render_template('ageGroup.html', chart_data=None, state=None)
+
+    if request.method == 'POST':
+        state = request.form['stateSelected']
+        df_state = df[df['State'] == state]
+
+        # Filter out the "0-100+" age group
+        df_state = df_state[df_state['Age_group'] != '0-100+']
+
+        age_group_data = df_state.groupby('Age_group')['Total'].sum()
+
+        plt.figure(figsize=(8, 8))
+        plt.pie(age_group_data, labels=age_group_data.index, autopct='%1.1f%%', startangle=140)
+        plt.title(f'Suicide Data by Age Group in {state}')
+        plt.axis('equal')
+
+        buffer = io.BytesIO()
+        plt.savefig(buffer, format='png')
+        buffer.seek(0)
+        chart_data = base64.b64encode(buffer.read()).decode('utf-8')
+
+        plt.close()  # Close the plot to release resources
+
+        return render_template('ageGroup.html', chart_data=chart_data, state=state)
+
 
 # state rout 
 @app.route('/state', methods=['GET','POST'])
